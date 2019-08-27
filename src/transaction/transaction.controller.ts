@@ -1,5 +1,5 @@
 import { TransactionService } from './transaction.service';
-import { TransactionDTO } from './dto/transaction';
+import { TransactionDTO } from '../dto/transaction';
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { ApiUseTags, ApiResponse, ApiCreatedResponse } from '@nestjs/swagger';
 

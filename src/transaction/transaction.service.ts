@@ -1,8 +1,11 @@
+import { TransactionDTO } from './../dto/transaction';
+import { Status } from 'src/dto/Enum';
 import { Transaction } from './../models/transaction.entity';
-import { TransactionI } from './interface/transaction.interface';
+import { TransactionI } from '../interface/transaction.interface';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DeleteResult } from 'typeorm';
+import { Repository, DeleteResult, UpdateResult } from 'typeorm';
+import { Commerce } from 'src/models/commerce.entity';
 
 @Injectable()
 export class TransactionService {
@@ -27,16 +30,27 @@ export class TransactionService {
         }
     }
 
-    async createTransaction(transaction: TransactionI){
+    async createTransaction(transaction: TransactionDTO){
         try {
-            const newTransaction = await this.transactionModel.save(transaction);
+            
+            let insert: TransactionI = {
+                reference: '',
+                external_reference: '',
+                id_commerce: 1,
+                id_commerce_fee: 1,
+                id_orden: 1,
+                id_platform_commerce: 1,
+                status: Status.aprobado,
+                date: new Date()
+            };
+            const newTransaction = await this.transactionModel.save(insert);
             return newTransaction;
         } catch (error) {
             return error;
         }
     }
 
-    async updateTransaction(id: number, update?: TransactionI): Promise<any>{
+    async updateTransaction(id: number, update?: Object): Promise<UpdateResult>{
         try {
             return await this.transactionModel.update({ id }, update)
             .then((response) => response)

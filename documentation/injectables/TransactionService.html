@@ -118,7 +118,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="8" class="link-to-prism">src/transaction/transaction.service.ts:8</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/transaction/transaction.service.ts:11</a></div>
                             </td>
                         </tr>
 
@@ -178,15 +178,15 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>createTransaction(transaction: <a href="../interfaces/TransactionI.html">TransactionI</a>)</code>
+                    <code>createTransaction(transaction: <a href="../classes/TransactionDTO.html">TransactionDTO</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="30"
-                            class="link-to-prism">src/transaction/transaction.service.ts:30</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="33"
+                            class="link-to-prism">src/transaction/transaction.service.ts:33</a></div>
                 </td>
             </tr>
 
@@ -208,7 +208,7 @@
                                 <tr>
                                     <td>transaction</td>
                                     <td>
-                                                <code><a href="../interfaces/TransactionI.html" target="_self" >TransactionI</a></code>
+                                                <code><a href="../classes/TransactionDTO.html" target="_self" >TransactionDTO</a></code>
                                     </td>
 
                                     <td>
@@ -257,8 +257,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="49"
-                            class="link-to-prism">src/transaction/transaction.service.ts:49</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="63"
+                            class="link-to-prism">src/transaction/transaction.service.ts:63</a></div>
                 </td>
             </tr>
 
@@ -329,8 +329,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="14"
-                            class="link-to-prism">src/transaction/transaction.service.ts:14</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="17"
+                            class="link-to-prism">src/transaction/transaction.service.ts:17</a></div>
                 </td>
             </tr>
 
@@ -370,8 +370,8 @@
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="22"
-                            class="link-to-prism">src/transaction/transaction.service.ts:22</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="25"
+                            class="link-to-prism">src/transaction/transaction.service.ts:25</a></div>
                 </td>
             </tr>
 
@@ -435,15 +435,15 @@
             <tr>
                 <td class="col-md-4">
                     <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>updateTransaction(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, update?: <a href="../interfaces/TransactionI.html">TransactionI</a>)</code>
+                    <code>updateTransaction(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, update?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank">Object</a>)</code>
                 </td>
             </tr>
 
 
             <tr>
                 <td class="col-md-4">
-                    <div class="io-line">Defined in <a href="" data-line="39"
-                            class="link-to-prism">src/transaction/transaction.service.ts:39</a></div>
+                    <div class="io-line">Defined in <a href="" data-line="53"
+                            class="link-to-prism">src/transaction/transaction.service.ts:53</a></div>
                 </td>
             </tr>
 
@@ -477,7 +477,7 @@
                                 <tr>
                                     <td>update</td>
                                     <td>
-                                                <code><a href="../interfaces/TransactionI.html" target="_self" >TransactionI</a></code>
+                                                <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank" >Object</a></code>
                                     </td>
 
                                     <td>
@@ -508,11 +508,14 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="c-source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Transaction } from &#x27;./../models/transaction.entity&#x27;;
-import { TransactionI } from &#x27;./interface/transaction.interface&#x27;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { TransactionDTO } from &#x27;./../dto/transaction&#x27;;
+import { Status } from &#x27;src/dto/Enum&#x27;;
+import { Transaction } from &#x27;./../models/transaction.entity&#x27;;
+import { TransactionI } from &#x27;../interface/transaction.interface&#x27;;
 import { Injectable } from &#x27;@nestjs/common&#x27;;
 import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
 import { Repository, DeleteResult } from &#x27;typeorm&#x27;;
+import { Commerce } from &#x27;src/models/commerce.entity&#x27;;
 
 @Injectable()
 export class TransactionService {
@@ -537,16 +540,27 @@ export class TransactionService {
         }
     }
 
-    async createTransaction(transaction: TransactionI){
+    async createTransaction(transaction: TransactionDTO){
         try {
-            const newTransaction &#x3D; await this.transactionModel.save(transaction);
+            
+            let insert: TransactionI &#x3D; {
+                reference: &#x27;&#x27;,
+                external_reference: &#x27;&#x27;,
+                id_commerce: 1,
+                id_commerce_fee: 1,
+                id_orden: 1,
+                id_platform_commerce: 1,
+                status: Status.aprobado,
+                date: new Date()
+            };
+            const newTransaction &#x3D; await this.transactionModel.save(insert);
             return newTransaction;
         } catch (error) {
             return error;
         }
     }
 
-    async updateTransaction(id: number, update?: TransactionI): Promise&lt;any&gt;{
+    async updateTransaction(id: number, update?: Object): Promise&lt;any&gt;{
         try {
             return await this.transactionModel.update({ id }, update)
             .then((response) &#x3D;&gt; response)
